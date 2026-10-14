@@ -154,6 +154,28 @@ dd{margin:0;color:var(--muted)}
 .mem{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;border-top:1px solid var(--line);padding:12px 0}
 .mem b{font-weight:600}.mem .meta{display:block;overflow-wrap:anywhere}
 .mem .row{grid-column:1/-1}
+.group{margin-top:18px}
+.group>h3{font:600 .78rem var(--f-body);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 2px}
+.group>p{font-size:.85rem;color:var(--muted);margin:0 0 8px}
+.tests.compact{gap:6px;margin-top:0}
+.tests.compact .test{display:flex;flex-wrap:nowrap;align-items:center;gap:6px 12px;padding:10px 14px}
+.tests.compact .tmain{flex:1 1 auto;min-width:0}
+.tests.compact h4{font-family:var(--f-display);font-weight:500;font-size:1.05rem;margin:0}
+.tests.compact .meta{display:block}
+.tests.compact .act{display:flex;align-items:center;gap:8px;margin-left:auto;flex:none}
+details.sec{padding:0}
+details.sec>summary{list-style:none;cursor:pointer;padding:16px 20px;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;color:var(--fg)}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary::before{content:"▸";color:var(--accent);font-size:.9rem;margin-right:2px;transition:transform .15s}
+details.sec[open]>summary::before{transform:rotate(90deg)}
+details.sec>summary b{font-family:var(--f-display);font-weight:500;font-size:1.15rem}
+details.sec>summary .meta{margin-left:auto}
+details.sec>.secbody{padding:0 24px 24px}
+.secttl{font:600 .78rem var(--f-body);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:24px 0 4px}
+.concl h2{margin-bottom:4px}
+.bullets{margin:8px 0 0;padding-left:20px;display:grid;gap:6px}
+.progress{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:10px 0 4px}
+.progress>span{display:block;height:100%;background:var(--accent)}
 .note{font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;margin-top:20px}
 @media (max-width:480px){.sumtable th:nth-child(2),.sumtable td:nth-child(2){display:none}.opts.two{grid-template-columns:1fr}.cols{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -207,7 +229,7 @@ dd{margin:0;color:var(--muted)}
     </details>
     <h2 id="home-title">Les tests</h2>
     <p id="home-intro"></p>
-    <div class="tests" id="tests"></div>
+    <div id="tests"></div>
     <p class="meta store" style="margin-top:14px"></p>
     <div class="row" style="margin-top:12px">
       <button class="btn" type="button" id="go-res">Voir le bilan</button>
@@ -226,6 +248,7 @@ dd{margin:0;color:var(--muted)}
 
   <section class="panel" id="v-q" hidden>
     <div class="qnum" id="qnum"></div>
+    <p class="meta" id="qdesc" hidden></p>
     <p class="qtext" id="qtext"></p>
     <img class="eyes" id="qimg" alt="" hidden>
     <div class="opts" id="opts"></div>
@@ -301,6 +324,51 @@ const QF=["Plusieurs fois par jour","Quelques fois par jour","Quelques fois par 
 const QA=["Toujours","Habituellement","Parfois","Rarement","Jamais"];
 const QCHAT_OPTS=[QA,["Très facile","Plutôt facile","Plutôt difficile","Très difficile","Impossible"],QF,QF,QF,QF,QA,["Très typiques","Plutôt typiques","Légèrement inhabituels","Très inhabituels","Mon enfant ne parle pas"],QF,QF];
 
+const SQ=["Je trouve très facile d'utiliser les tableaux horaires des trains même s'ils impliquent plusieurs correspondances.", "J'aime les magasins de musique ou les librairies parce qu'ils sont clairement organisés.", "Je n'aimerais pas organiser des événements comme des soirées de collecte, des fêtes, des conférences, etc.", "Quand je lis quelque chose, je remarque toujours si c'est grammaticalement correct.", "Je me surprends à classer mentalement les gens en différents types.", "Je trouve difficile de lire et de comprendre les cartes.", "Quand je regarde une montagne, je pense à la manière précise dont elle s'est formée.", "Je ne suis pas intéressé(e) par les détails des taux de change, des taux d'intérêt et des valeurs boursières.", "Si j'achetais une voiture, je souhaiterais obtenir des informations spécifiques sur la capacité de son moteur.", "Je trouve difficile d'apprendre comment on programme un magnétoscope.", "Quand j'apprécie quelque chose, j'aime collectionner beaucoup d'exemples différents de chaque type d'objet afin de pouvoir observer ce en quoi ils diffèrent les uns des autres.", "Quand j'apprends une langue, je suis intrigué(e) par ses règles grammaticales.", "J'aime savoir comment les comités sont structurés : qui les différents membres du comité représentent ou quelles fonctions ils occupent.", "Si j'avais une collection (par exemple, de CD, de timbres, de pièces de monnaies, etc.), elle serait extrêmement organisée.", "Je trouve qu'il est difficile de comprendre les manuels d'instructions permettant d'assembler des appareils.", "Quand je regarde un bâtiment, je suis curieux(se) de savoir de quelle manière précise il a été construit.", "Je ne suis pas intéressé(e) par la compréhension du fonctionnement des réseaux de communication sans fil (ex : téléphonie mobile).", "Quand je voyage en train, je me demande souvent comment le réseau des chemins de fer est précisément coordonné.", "J'aime consulter les catalogues de produits afin de voir le détail de chaque produit et de voir comment il se distingue des autres.", "Quand il me manque quelque chose à la maison, je l'ajoute toujours à ma liste de courses.", "Je sais, avec une précision raisonnable, quelle quantité d'argent entre et sort sur/de mon compte en banque ce mois.", "Quand j'étais jeune, je ne prenais pas de plaisir à collectionner des séries de choses comme des stickers, des cartes de football, etc.", "Je suis intéressé(e) par mon arbre généalogique et par le fait de comprendre comment chaque personne est reliée aux autres au sein de la famille.", "Quand j'apprends des événements historiques, je ne me focalise pas sur les dates exactes.", "Je trouve qu'il est facile de comprendre exactement comment dans les paris les cotes fonctionnent.", "Je ne prends pas de plaisir dans les jeux qui requièrent un haut niveau de stratégie (par exemple les échecs, Risk, etc.).", "Quand j'apprends une nouvelle catégorie, j'aime aller dans les détails pour comprendre les petites différences entre les membres de cette catégorie.", "Je ne trouve pas cela gênant quand quelqu'un qui vit avec moi perturbe mes habitudes.", "Quand je regarde un animal, j'aime connaître l'espèce précise à laquelle il appartient.", "Je peux me rappeler de grandes quantités d'informations à propos d'un sujet qui m'intéresse (par exemple, les drapeaux nationaux, les logos des compagnies aériennes).", "À la maison, je ne classe pas précautionneusement tous les documents importants (par exemple, les garanties, les polices d'assurance).", "Je suis fasciné(e) par la manière dont les machines fonctionnent.", "Quand je regarde un meuble, je ne remarque pas les détails de sa réalisation.", "Je connais très peu de choses sur les différentes étapes des procédures législatives de mon pays.", "Je n'ai pas tendance à regarder des documentaires scientifiques à la télévision ou à lire des articles portant sur la science et la nature.", "Si quelqu'un m'arrêtait pour me demander le chemin, je serais capable de lui indiquer la direction vers n'importe quelle partie de la ville dans laquelle je vis.", "Quand je regarde un tableau, je ne pense habituellement pas à la technique employée pour le réaliser.", "Je préfère les interactions sociales qui sont organisées autour d'une activité précise (par exemple, un hobby).", "Je ne vérifie pas toujours que mes tickets de frais correspondent à mes relevés de compte bancaire.", "Je ne suis pas intéressé(e) par la manière dont le gouvernement est organisé en termes de différents ministères et départements.", "Cela m'intéresse de connaître le parcours d'une rivière, de sa source à la mer.", "J'ai une vaste collection de livres, CD, vidéos, etc.", "S'il y avait un problème avec l'installation électrique de ma maison, je serais capable de le régler moi-même.", "Dans ma garde-robe, mes vêtements ne sont pas précautionneusement organisés en fonction de leurs différentes catégories d'appartenance.", "Je lis rarement des articles ou des pages web sur des nouvelles technologies.", "Je peux facilement visualiser la manière dont les autoroutes de ma région sont reliées les unes aux autres.", "Quand une élection a lieu, je ne suis pas intéressé(e) par les résultats de chacun des partis.", "Je ne prends pas particulièrement de plaisir à en apprendre sur les faits et les personnages historiques.", "Je n'ai pas tendance à me souvenir des dates d'anniversaire des gens (en termes de jour et de mois).", "Quand je me balade à la campagne, je suis curieux(se) de savoir de quelle manière les variétés d'arbres diffèrent.", "Je trouve difficile de comprendre les informations que la banque m'envoie sur les différents types d'investissement et sur les systèmes de protection.", "Si j'achetais un appareil photo, je ne ferais pas particulièrement attention à la qualité de la lentille.", "Si j'achetais un ordinateur, je voudrais connaître les détails exacts des capacités du disque dur et de la vitesse du processeur.", "Je ne lis pas les documents légaux très attentivement.", "Quand j'arrive à la caisse d'un supermarché, je range les différentes catégories de produits dans des sacs distincts.", "Je ne suis pas de méthode particulière quand je nettoie ma maison.", "Je ne prends pas de plaisir aux discussions politiques approfondies.", "Je ne suis pas très méticuleux(se) lorsque j'effectue des travaux moi-même pour, par exemple, apporter des améliorations à ma maison.", "Je ne prendrais pas de plaisir à monter une affaire du début à la fin.", "Si j'achetais une chaîne stéréo, je voudrais connaître ses caractéristiques techniques spécifiques.", "J'ai tendance à conserver des choses que d'autres pourraient jeter au cas où elles me seraient utiles dans l'avenir.", "J'évite les situations que je ne peux pas contrôler.", "Cela ne m'intéresse pas de connaître le nom des plantes que je vois.", "Quand j'entends les prévisions météo, je ne suis pas très intéressé(e) par les aspects purement météorologiques.", "Cela ne m'embête pas si les choses de ma maison ne sont pas à leur place.", "En math, je suis intrigué(e) par les règles et les relations qui gouvernent les nombres.", "Je trouve difficile de m'orienter dans une nouvelle ville.", "Je pourrais faire la liste de mes 10 livres préférés, et me rappeler des titres et du nom des auteurs de mémoire.", "Quand je lis le journal, je suis attiré(e) par les grilles d'informations comme les scores du football ou les indices de marché.", "Quand je suis dans un avion, je ne pense pas aux lois de l'aérodynamique.", "Je ne conserve pas avec soin les factures du ménage.", "Quand j'ai pas mal de courses à faire, j'aime planifier les types de magasins dans lesquels je dois aller et l'ordre dans lequel je compte m'y rendre.", "Quand je cuisine, je ne pense pas exactement à la manière dont les différents ingrédients et tâches contribuent au produit final.", "Quand j'écoute un morceau de musique, je remarque toujours la manière dont il est structuré.", "Je pourrais produire la liste de mes 10 chansons favorites de mémoire, en donnant le titre et le nom des artistes qui ont réalisé chaque chanson."];
+const SQ_NEG=new Set([3, 6, 8, 10, 15, 17, 22, 24, 26, 28, 31, 33, 34, 35, 37, 39, 40, 44, 45, 47, 48, 49, 51, 52, 54, 56, 57, 58, 59, 63, 64, 65, 67, 70, 71, 73]);
+const E5=["Très facile","Assez facile","Pas très facile","Assez difficile","Très difficile"],E5P=[5,4,2,1,0];
+const IMP=["Sans importance","Peu important","Assez important","Très important","Extrêmement important"],IMPP=[0,1,2,4,5];
+const INT=["Pas du tout","Pas beaucoup","Assez","Beaucoup"],INTP=[0,1,3,5];
+const SIM=["Beaucoup","Assez","Pas vraiment","Pas du tout"],SIMP=[5,3,1,0];
+const TOP=["La politique et l'actualité","Les loisirs et centres d'intérêt (sport, séries, musique, bricolage…)","Les sujets personnels (choix de vie, disputes, sentiments)","Le travail","La famille et les amis","La météo","Ce que j'ai fait depuis la dernière fois"],TOPP=[0,0,5,0,5,0,0];
+const FQD=[
+["Côté meilleurs amis…",["J'ai un ou deux meilleurs amis","J'ai plusieurs amis que je considère comme des meilleurs amis","Je n'ai personne que je considère comme un meilleur ami"],[5,2,0]],
+["Dans une amitié, le plus important est…",["d'avoir quelqu'un à qui se confier","d'avoir quelqu'un avec qui s'amuser"],[5,0]],
+["Si je devais choisir, je préférerais un ami…",["qui aime faire les mêmes choses que moi","qui voit la vie comme moi"],[0,5]],
+["Avec les gens…",["j'aime être proche d'eux","j'aime garder mes distances"],[5,0]],
+["Quand j'appelle un ami, c'est surtout…",["pour organiser quelque chose","pour discuter"],[0,5]],
+["En général…",["je pense d'abord à une activité, puis je cherche quelqu'un avec qui la faire","je fixe d'abord un rendez-vous avec quelqu'un, puis on voit quoi faire"],[0,5]],
+["Je préfère voir un ami…",["pour une activité précise (cinéma, sport…)","pour discuter (au café, en terrasse…)"],[0,5]],
+["Si je déménageais…",["je ferais plus d'efforts pour garder mes anciens amis","je ferais plus d'efforts pour me faire de nouveaux amis"],null],
+["Mes amis m'apprécient surtout…",["comme quelqu'un qui les soutient","comme quelqu'un avec qui s'amuser"],[5,0]],
+["Si un ami avait un problème, je serais plus doué pour…",["parler de ce qu'il ressent","trouver des solutions pratiques"],[5,0]],
+["Si un ami traversait des problèmes personnels…",["j'attendrais qu'il me contacte, pour ne pas m'immiscer","je le contacterais pour en parler"],null],
+["Quand j'ai un problème personnel, je pense qu'il vaut mieux…",["le régler seul","en parler à un ami","essayer de l'oublier"],[0,5,0]],
+["Si je dois faire une critique à un ami, il vaut mieux…",["aborder le sujet en douceur","le dire franchement"],[5,0]],
+["Si je me brouillais avec un bon ami alors que je pense n'avoir rien fait de mal…",["je ferais tout pour réparer la relation","je ferais le premier pas, s'il fait aussi sa part","je réglerais le problème, s'il fait le premier pas","je ne pourrais plus être proche de lui"],[5,3,1,0]],
+["Mon espace de travail idéal serait…",["un bureau seul, sans visite de la journée","un bureau seul, avec quelques visites","un bureau partagé avec une ou deux personnes","un open space"],[0,1,3,5]],
+["Parler de mes sentiments avec mes amis, c'est…",E5,E5P],
+["Parler de mes sentiments avec un inconnu, ce serait…",E5,null],
+["Pour la personnalité, je ressemble à mes amis…",SIM,SIMP],
+["Pour les centres d'intérêt, je ressemble à mes amis…",SIM,null],
+["Ce que mes amis pensent de moi est…",IMP,IMPP],
+["Ce que des inconnus pensent de moi est…",IMP,null],
+["Reconnaître devant mes amis que j'ai tort, c'est…",E5,E5P],
+["Parler à un ami de mes faiblesses et de mes échecs, c'est…",E5,E5P],
+["Parler à un ami de mes réussites, c'est…",E5,null],
+["Le quotidien de mes amis proches (couple, famille, ce qu'ils vivent) m'intéresse…",INT,INTP],
+["Le quotidien de mes simples connaissances m'intéresse…",INT,INTP],
+["Dans un groupe (travail, association…), connaître les « potins » (qui s'entend mal avec qui, les histoires, les secrets) est…",IMP,IMPP],
+["Je m'investis davantage dans ma carrière que dans mes amitiés.",["Oui","Non","Autant dans les deux"],[0,5,2]],
+["Je prévois de voir des amis…",["Une ou deux fois par an","Tous les 2 ou 3 mois","Une fois par mois","Toutes les deux semaines","Une ou deux fois par semaine","3 ou 4 fois par semaine","Plus souvent encore"],[0,1,2,3,4,5,5]],
+["Pour garder le contact avec mes amis, je préfère avant tout…",["les voir en personne","les messages, e-mails ou lettres","le téléphone"],[5,0,2]],
+["Me faire de nouveaux amis, c'est…",E5,E5P],
+["Le minimum de contact social dont j'ai besoin pour passer une journée…",["Aucun, je ne me sens pas seul","Juste être près des gens, même sans leur parler","Une petite discussion, avec un commerçant par exemple","Une discussion avec un ami","Deux ou trois discussions avec des amis","Plus que tout cela"],[0,1,2,3,4,5]],
+["Le minimum de contact social dont j'ai besoin pour passer une semaine…",["Aucun, je ne me sens pas seul","Être entouré, même sans parler","Quelques petites discussions, avec des commerçants par exemple","Une discussion avec un ami","Deux ou trois discussions avec des amis dans la semaine","Une discussion par jour avec un ami","Deux ou trois discussions par jour avec des amis","Plus que tout cela"],[0,1,2,3,3,4,5,5]],
+["Avec mes amis, le sujet dont je parle le plus, c'est…",TOP,TOPP],
+["Avec quelqu'un que je rencontre pour la première fois, le sujet que j'aborde le plus volontiers, c'est…",TOP,null]];
+const FQ=FQD.map(d=>d[0]),FQ_OPTS=FQD.map(d=>d[1]),FQ_PTS=FQD.map(d=>d[2]);
+
 const ROWS=[["jaloux", "paniqué", "arrogant", "haineux"], ["joueur", "réconfortant", "irrité", "s’ennuyant"], ["terrifié", "bouleversé", "arrogant", "agacé"], ["blagueur", "angoissé", "désir", "convaincu"], ["blagueur", "insistant", "amusé", "détendu"], ["irrité", "sarcastique", "inquiet", "amical"], ["effondré", "rêveur", "impatient", "alarmé"], ["s’excusant", "amical", "mal à l’aise", "démoralisé"], ["découragé", "soulagé", "timide", "excité"], ["agacé", "hostile", "horrifié", "préoccupé"], ["prudent", "insistant", "s’ennuyant", "effondré"], ["terrifié", "amusé", "plein de regrets", "charmeur"], ["indifférent", "embarrassé", "sceptique", "démoralisé"], ["déterminé", "prévoyant", "menaçant", "timide"], ["irrité", "déçu", "déprimé", "accusateur"], ["contemplatif", "angoissé", "encourageant", "amusé"], ["irrité", "songeur", "encourageant", "compatissant"], ["dubitatif", "affectueux", "joueur", "effondré"], ["déterminé", "amusé", "effondré", "s’ennuyant"], ["arrogant", "reconnaissant", "sarcastique", "hésitant"], ["dominant", "amical", "coupable", "horrifié"], ["embarrassé", "rêveur", "confus", "paniqué"], ["préoccupé", "reconnaissant", "insistant", "suppliant"], ["content", "s’excusant", "provoquant", "curieux"], ["pensif", "irrité", "excité", "hostile"], ["paniqué", "incrédule", "découragé", "intéressé"], ["alarmé", "timide", "hostile", "anxieux"], ["blagueur", "prudent", "arrogant", "rassurant"], ["intéressé", "blagueur", "affectueux", "content"], ["impatient", "effondré", "irrité", "réfléchi"], ["reconnaissant", "charmeur", "hostile", "déçu"], ["honteux", "confiant", "blagueur", "démoralisé"], ["sérieux", "honteux", "bouche-bée", "alarmé"], ["embarrassé", "coupable", "rêveur", "soucieux"], ["effondré", "dérouté", "méfiant", "terrifié"], ["perplexe", "nerveux", "insistant", "contemplatif"], ["honteux", "nerveux", "suspicieux", "indécis"]];
 const KEY_RM=[0,1,2,1,2,1,2,0,3,0,2,2,1,3,0,1,0,0,3,1,1,0,2,0,3,2,1,0,3,1,1,0,3,2,1,2];
 const RM_AMBIG=new Set([7,13,17,19,23,27,35]);
@@ -324,10 +392,20 @@ const T={
   aqC:{name:"Quotient du spectre autistique, enfant",short:"AQ enfant",n:50,items:AQC,scale:SC4,parent:true,desc:"50 affirmations, environ 15 minutes, remplies par un parent. Repère les traits du spectre autistique dans cinq domaines.",ref:"Auyeung et al., 2008 · version française S. Sonié, CRA Rhône-Alpes"},
   cast:{name:"Test de l'enfance",short:"CAST",n:39,items:CAST_NOW,scale:["Oui","Non"],unit:"question",parent:true,desc:"39 questions oui/non, environ 10 minutes, remplies par un parent. Le questionnaire de repérage de référence entre 4 et 11 ans.",ref:"Scott, Baron-Cohen et al., 2002 · formulation au présent faite pour cette page"},
   qchat:{name:"Repérage chez le tout-petit",short:"Q-CHAT-10",n:10,items:QCHAT,optsFor:i=>QCHAT_OPTS[i],unit:"question",parent:true,desc:"10 questions, environ 3 minutes, remplies par un parent. Conçu pour les enfants de 18 à 24 mois.",ref:"Allison, Auyeung et Baron-Cohen, 2012 · version française M. Bastien"},
+  sq:{name:"Goût pour les systèmes",short:"SQ",n:75,items:SQ,scale:SC4,meta:"75 affirmations · 15 min",desc:"Mesure l'attrait pour les systèmes, les règles et le fonctionnement des choses (machines, cartes, classements, chiffres).",ref:"Baron-Cohen et al., 2003 · version révisée (SQ-R), française S. Braun et C. Kempenaers"},
+  fq:{name:"Amitiés et relations",short:"FQ",n:35,items:FQ,optsFor:i=>FQ_OPTS[i],unit:"question",meta:"35 questions · 8 min",desc:"Mesure la place et la forme des amitiés dans votre vie : proximité, confidences, besoin de contact. Pour les classements de l'original, on ne retient ici que votre premier choix.",ref:"Baron-Cohen et Wheelwright, 2003 · traduction française complétée pour cette page"},
   cq:{name:"Camouflage social",short:"CAT-Q",n:25,items:CQ,scale:SC7,desc:"25 affirmations, environ 7 minutes. Mesure les stratégies pour paraître à l'aise en société : imiter, masquer, se forcer.",ref:"Hull et al., 2019 · traduction française M. B. Bessette"}
 };
-const BANDS={adult:{label:"Adulte",tests:["aq","eq","rm","tas","cq","spq","fp","castR"]},teen:{label:"Ado, 12-15 ans",tests:["aqT","eqT"]},child:{label:"Enfant, 4-11 ans",tests:["aqC","cast"]},toddler:{label:"Tout-petit, 18-24 mois",tests:["qchat"]}};
+const BANDS={adult:{label:"Adulte",tests:["aq","cq","eq","fq","rm","fp","tas","spq","sq","castR"]},teen:{label:"Ado, 12-15 ans",tests:["aqT","eqT"]},child:{label:"Enfant, 4-11 ans",tests:["aqC","cast"]},toddler:{label:"Tout-petit, 18-24 mois",tests:["qchat"]}};
 let ORDER=BANDS.adult.tests;
+const OPTIONAL=new Set(["castR"]);
+const GROUPS={
+  adult:[["Traits autistiques","Les deux questionnaires de référence sur le fonctionnement autistique.",["aq","cq"]],["Relations et empathie","Ce que vous percevez des autres, et comment vous vivez vos relations.",["eq","fq","rm","fp"]],["Émotions, sens et façon de penser","Vos propres émotions, vos sens, votre goût pour les systèmes.",["tas","spq","sq"]],["Enfance · facultatif","À faire remplir par un parent ou un proche qui vous a connu enfant. Utile, mais pas indispensable à la conclusion.",["castR"]]],
+  teen:[["Questionnaires remplis par un parent","",["aqT","eqT"]]],
+  child:[["Questionnaires remplis par un parent","",["aqC","cast"]]],
+  toddler:[["Questionnaire rempli par un parent","",["qchat"]]]};
+const META={aq:"50 affirmations · 15 min",eq:"40 affirmations · 10 min",rm:"36 photos · 10 min",tas:"20 affirmations · 5 min",cq:"25 affirmations · 7 min",spq:"35 affirmations · 8 min",fp:"20 histoires · 20 min",castR:"39 questions · 10 min · rempli par un proche",aqT:"50 affirmations · 15 min",eqT:"40 affirmations · 10 min",aqC:"50 affirmations · 15 min",cast:"39 questions · 10 min",qchat:"10 questions · 3 min"};
+const required=()=>ORDER.filter(m=>!OPTIONAL.has(m));
 
 /* ---------- état : comptes et personnes dans Supabase ---------- */
 const SB_OK=typeof window.supabase!=="undefined"&&!!window.supabase.createClient;
@@ -410,6 +488,8 @@ const P={
   qchat:(n,v)=>v==null?0:(n<=9?(v>=2?1:0):(v<=2?1:0))
 };
 P.cast=P.castR;
+P.sq=(n,v)=>v==null?0:(SQ_NEG.has(n)?[0,0,1,2][v]:[2,1,0,0][v]);
+P.fq=(n,v)=>{if(v==null)return 0;const p=FQ_PTS[n-1];return p?p[v]:0};
 const pt=(m,n)=>P[m](n,S[m][n-1]);
 const sum=(m,items)=>items.reduce((a,n)=>a+pt(m,n),0);
 const total=m=>sum(m,[...Array(m==="cast"||m==="castR"?37:T[m].n)].map((_,i)=>i+1));
@@ -438,13 +518,20 @@ function renderHome(){
   const p=curProfile(),kid=p.band!=="adult";
   $("home-title").textContent=(p.name==="Moi"?"Mes tests":"Les tests de "+p.name)+" · "+BANDS[p.band].label.toLowerCase();
   $("home-intro").textContent=kid?"Ces questionnaires sont remplis par un parent, en pensant au comportement habituel de l'enfant. Ce sont des outils de repérage : en cas de doute, le bon interlocuteur est le pédiatre ou le médecin traitant.":"Faites les tests dans l'ordre que vous voulez. Le bilan s'écrit tout seul au fur et à mesure : chaque test terminé est analysé, puis croisé avec les autres.";
-  const box=$("tests");box.innerHTML="";
-  ORDER.forEach(m=>{const t=T[m],d=done(m),c=d===t.n;
-    const div=document.createElement("div");div.className="test";
-    const chip=c?"<span class='chip ok'>Terminé</span>":d>0?"<span class='chip go'>En cours · "+d+"/"+t.n+"</span>":"<span class='chip'>À faire</span>";
-    div.innerHTML="<h3>"+t.name+" <span class='meta'>("+t.short+")</span></h3>"+chip+"<p>"+t.desc+"</p><div class='row'><button class='btn small"+(c?" ghost":"")+"' type='button'>"+(c?"Revoir mes réponses":d>0?"Reprendre":"Commencer")+"</button><span class='meta'>"+t.ref+"</span></div>";
-    div.querySelector("button").onclick=()=>start(m);box.appendChild(div)});
+  const box=$("tests");box.innerHTML="";box.className="";
+  (GROUPS[p.band]||[]).forEach(([title,sub,tests])=>{
+    const g=document.createElement("section");g.className="group";
+    g.innerHTML="<h3></h3>"+(sub?"<p></p>":"")+"<div class='tests compact'></div>";g.querySelector("h3").textContent=title;if(sub)g.querySelector("p").textContent=sub;
+    const list=g.querySelector(".tests");
+    tests.forEach(m=>{const t=T[m],d=done(m),c=d===t.n;
+      const div=document.createElement("div");div.className="test";div.title=t.desc;
+      const chip=c?"<span class='chip ok'>Terminé</span>":d>0?"<span class='chip go'>"+d+"/"+t.n+"</span>":"";
+      div.innerHTML="<div class='tmain'><h4></h4><span class='meta'></span></div><div class='act'>"+chip+"<button class='btn small"+(c?" ghost":"")+"' type='button'>"+(c?"Revoir":d>0?"Reprendre":"Commencer")+"</button></div>";
+      div.querySelector("h4").textContent=t.name;div.querySelector(".meta").textContent=t.short+" · "+(t.meta||META[m]||"");
+      div.querySelector("button").onclick=()=>start(m);list.appendChild(div)});
+    box.appendChild(g)});
   const any=ORDER.some(complete);$("go-res").disabled=!any;
+  const req=required(),rd=req.filter(complete).length;$("go-res").textContent=rd===req.length?"Voir la conclusion":"Voir le bilan ("+rd+"/"+req.length+")";
   storageNote();
 }
 function goHome(){mode=null;renderHome();show("v-home");header()}
@@ -458,6 +545,7 @@ function openQuiz(){buildGrid();if(!T[mode].photo&&!T[mode].story&&!T[mode].opts
 function render(){
   const n=N(),a=S[mode],t=T[mode];
   $("fpbox").hidden=!t.story;$("opts").hidden=!!t.story;
+  $("qdesc").hidden=cur!==0;$("qdesc").textContent=t.desc||"";
   if(t.story){$("qnum").textContent="Faux pas · histoire "+(cur+1)+" sur 20";$("qtext").hidden=true;$("qimg").hidden=true;$("defs").hidden=true;renderFP()}
   else if(!t.photo){if(t.optsFor)buildOpts(t.optsFor(cur));$("qnum").textContent=t.short+" · "+(t.unit||"affirmation")+" "+(cur+1)+" sur "+n+(cur>=37&&(mode==="cast"||mode==="castR")?" · non comptée dans le score":"");$("qtext").hidden=false;$("qtext").textContent=t.items[cur];$("qimg").hidden=true;$("defs").hidden=true}
   else{$("qnum").textContent="Test des yeux · photo "+(cur+1)+" sur 36";$("qtext").hidden=true;const im=$("qimg");im.hidden=false;im.src=IMGS[cur+1];im.alt="Regard numéro "+(cur+1);
@@ -488,7 +576,7 @@ function renderFP(){
   box.querySelectorAll("textarea[data-t]").forEach(ta=>ta.oninput=()=>{const o=Object.assign({},S.fp[cur]||{});o[ta.dataset.t]=ta.value.slice(0,600);S.fp[cur]=o;save();const ok=fpDone(o);$("d"+cur).classList.toggle("done",ok)});
 }
 function choose(k){const a=S[mode];a[cur]=k;save();const n=N();
-  if(cur<n-1){render();setTimeout(()=>{if(mode){cur++;render()}},160)}
+  if(cur<n-1){render();setTimeout(()=>{if(mode&&cur<N()-1){cur++;render()}},160)}
   else if(done(mode)===n){render();showResults()}
   else{cur=a.indexOf(null);render()}
 }
@@ -660,55 +748,125 @@ function anaQCHAT(){
   const pos=[...Array(10)].map((_,i)=>i+1).filter(n=>pt("qchat",n)===1);
   if(pos.length)h+=finding("Les points relevés","Réponses comptées dans le score :",q("qchat",pos));
   return h}
-const ANA={aq:anaAQ,eq:anaEQ,rm:anaRM,tas:anaTAS,cq:anaCQ,spq:anaSPQ,fp:anaFP,castR:anaCAST,cast:anaCAST,aqT:anaAQkid,aqC:anaAQkid,eqT:anaEQkid,qchat:anaQCHAT};
+function anaSQ(){
+  const s=total("sq");let z,c,x;
+  if(s>=77){z="Très élevé (77 et plus)";c="high";x="Au niveau moyen des adultes autistes dans l'étude de validation (environ 77 sur 150). Les hommes ont en moyenne environ 61, les femmes environ 52."}
+  else if(s>=61){z="Au-dessus de la moyenne";c="";x="Au-dessus de la moyenne des hommes (environ 61 sur 150) : un goût marqué pour comprendre comment les choses fonctionnent. C'est fréquent chez les ingénieurs, techniciens et pilotes."}
+  else if(s>=45){z="Dans la moyenne";c="ok";x="Dans la fourchette habituelle (hommes environ 61, femmes environ 52)."}
+  else{z="Plutôt bas";c="ok";x="Un intérêt modéré pour les systèmes et les règles."}
+  let h=head("sq",s,150)+scaleHTML(s,0,150,[[0,61,"--accent-soft"],[61,77,"--line"],[77,150,"--hit-soft"]],[0,61,77,150])+zone(z,c)+"<p class='lead' style='margin-top:10px'>"+x+"</p>";
+  const top=[...Array(75)].map((_,i)=>i+1).filter(n=>pt("sq",n)===2);
+  if(top.length)h+=finding("Ce qui vous attire le plus","Les affirmations auxquelles vous adhérez le plus nettement :",q("sq",top.slice(0,10)));
+  if(complete("eq")){const e=total("eq");const eHi=e>=42,sHi=s>=61;
+    h+=finding("Empathie et systémisation","Votre empathie déclarée (EQ "+e+"/80) est "+(eHi?"au niveau ou au-dessus":"en dessous")+" de la moyenne des hommes (environ 42), et votre goût pour les systèmes (SQ "+s+"/150) est "+(sHi?"au niveau ou au-dessus":"en dessous")+" de leur moyenne (environ 61). "+(!eHi&&sHi?"Baron-Cohen décrit ce profil, où la systémisation l'emporte nettement sur l'empathie, comme « systémisant ». Il est plus fréquent chez les personnes autistes, mais aussi chez beaucoup de profils techniques sans autisme.":eHi&&!sHi?"Ce profil, où l'empathie l'emporte, est dit « empathisant ».":"Les deux sont relativement équilibrés.")+(complete("tas")&&total("tas")>=61&&!eHi?" Rappel : l'alexithymie fait baisser l'empathie déclarée, ce qui accentue l'écart.":""))}
+  return h}
+function anaFQ(){
+  const s=total("fq");let z,c,x;
+  if(s>=70){z="Dans la fourchette habituelle";c="ok";x="Dans l'étude de validation, les hommes avaient en moyenne environ 70 et les femmes environ 90 sur 140. Environ 7 adultes sur 10 du groupe témoin obtenaient 70 ou plus, contre 1 adulte autiste sur 4."}
+  else if(s>=54){z="Un peu en dessous de la moyenne";c="";x="Sous la moyenne des hommes (environ 70), sans atteindre le niveau moyen des adultes autistes de l'étude (environ 53)."}
+  else{z="Bas";c="high";x="Au niveau moyen des adultes autistes de l'étude de validation (environ 53 sur 140). Ce questionnaire ne dit pas si c'est un choix ou une difficulté : beaucoup de personnes vivent très bien avec peu de relations proches."}
+  let h=head("fq",s,140)+scaleHTML(s,0,140,[[0,54,"--hit-soft"],[54,70,"--line"],[70,140,"--accent-soft"]],[0,54,70,140])+zone(z,c)+"<p class='lead' style='margin-top:10px'>"+x+"</p>";
+  const act=[5,6,7].filter(n=>ans("fq",n)===0);
+  if(act.length>=2)h+=finding("Des amitiés tournées vers l'action","Vous voyez vos amis pour faire quelque chose plutôt que pour discuter. C'est un style d'amitié courant chez les hommes, et encore plus marqué chez les personnes autistes.",q("fq",act));
+  if(ans("fq",32)!=null&&ans("fq",32)<=1&&ans("fq",33)<=2)h+=finding("Peu de besoin de contact","Une journée, voire une semaine, sans vraie conversation ne vous pèse pas.",q("fq",[32,33]));
+  const priv=[12,16,23].filter(n=>pt("fq",n)<=1);
+  if(priv.length>=2)h+=finding("Garder ses difficultés pour soi","Vous parlez peu de vos sentiments ou de vos faiblesses, même à vos amis. Ça rejoint souvent une difficulté à mettre des mots sur ses émotions.",q("fq",priv));
+  if(pt("fq",25)<=1)h+=finding("Peu d'intérêt pour le quotidien des autres","Ce que vivent vos amis au jour le jour vous intéresse peu.",q("fq",[25,26]));
+  return h}
+function lineOf(m){
+  const s=m==="fp"?fpStats().det:total(m);
+  switch(m){
+    case "aq":return [s+"/50",s>=32?"seuil haut":s>=26?"zone intermédiaire":"sous le seuil"];
+    case "eq":return [s+"/80",s<=32?"bas":s<=52?"moyen":"élevé"];
+    case "rm":return [s+"/36",s>=26?"dans la norme ou au-dessus":s>=22?"un peu sous la moyenne":"nettement sous la moyenne"];
+    case "tas":return [s+"/100",s>=61?"alexithymie probable":s>=52?"zone intermédiaire":"pas d'alexithymie"];
+    case "cq":{const av=CQ_SUB.map(([,it])=>sum("cq",it)/it.length);return [s+"/175",(s>=100?"camouflage marqué":"sous le seuil")+" · masquage "+av[1].toFixed(1).replace(".",",")+"/7"]}
+    case "spq":return [s+"/105",s<=28?"sensibilité élevée":s<=58?"fourchette habituelle":"sensibilité plutôt faible"];
+    case "fp":{const r=fpStats();return [s+"/10",r.det+" faux pas repérés, "+r.bel+"/10 compris comme involontaires"]}
+    case "castR":return [s+"/31",s>=15?"au-dessus du seuil":s>=12?"proche du seuil":"peu de signes"];
+    case "sq":return [s+"/150",s>=77?"très élevé":s>=61?"au-dessus de la moyenne":s>=45?"dans la moyenne":"plutôt bas"];
+    case "fq":return [s+"/140",s>=70?"fourchette habituelle":s>=54?"un peu en dessous":"bas"];
+    case "aqT":return [s+"/50",s>=30?"au-dessus du seuil":"sous le seuil"];
+    case "aqC":return [s+"/150",s>=76?"au-dessus du seuil":"sous le seuil"];
+    case "eqT":return [s+"/80",s<=32?"bas":"fourchette habituelle"];
+    case "cast":return [s+"/31",s>=15?"au-dessus du seuil":s>=12?"proche du seuil":"sous le seuil"];
+    case "qchat":return [s+"/10",s>=3?"au-dessus du seuil":"sous le seuil"];
+  }return [String(s),""]}
+const ANA={sq:anaSQ,fq:anaFQ,aq:anaAQ,eq:anaEQ,rm:anaRM,tas:anaTAS,cq:anaCQ,spq:anaSPQ,fp:anaFP,castR:anaCAST,cast:anaCAST,aqT:anaAQkid,aqC:anaAQkid,eqT:anaEQkid,qchat:anaQCHAT};
 function kidSynthesis(){
   const p=curProfile(),dn=ORDER.filter(complete);let rows="";const above=[];
-  dn.forEach(m=>{const s=total(m),max={aqT:50,aqC:150,eqT:80,cast:31,qchat:10}[m];let lec;
-    if(CUT[m]!=null){lec=s>=CUT[m]?"au-dessus du seuil":"sous le seuil";if(s>=CUT[m])above.push(T[m].short)}else lec=s<=32?"bas":"fourchette habituelle";
-    rows+="<tr><td>"+T[m].short+"</td><td>"+T[m].name+"</td><td class='n'>"+s+"/"+max+"</td><td>"+lec+"</td></tr>"});
-  let h="<h2>Bilan de "+esc(p.name)+"</h2><p class='lead'>"+dn.length+" questionnaire"+(dn.length>1?"s":"")+" sur "+ORDER.length+" terminé"+(dn.length>1?"s, remplis":", rempli")+" par un parent.</p><div class='tablewrap'><table class='sumtable'><thead><tr><th>Test</th><th>Mesure</th><th>Score</th><th>Lecture</th></tr></thead><tbody>"+rows+"</tbody></table></div>";
+  dn.forEach(m=>{const [sc,lec]=lineOf(m);if(CUT[m]!=null&&total(m)>=CUT[m])above.push(T[m].short);
+    rows+="<tr><td>"+T[m].short+"</td><td>"+T[m].name+"</td><td class='n'>"+sc+"</td><td>"+lec+"</td></tr>"});
+  const full=ORDER.every(complete);
+  let h="<h2>"+(full?"Conclusion · ":"Bilan en cours · ")+esc(p.name)+"</h2><p class='lead'>"+dn.length+" questionnaire"+(dn.length>1?"s":"")+" sur "+ORDER.length+" terminé"+(dn.length>1?"s, remplis":", rempli")+" par un parent.</p><div class='tablewrap'><table class='sumtable'><thead><tr><th>Test</th><th>Mesure</th><th>Score</th><th>Lecture</th></tr></thead><tbody>"+rows+"</tbody></table></div>";
   const v=above.length?"Au moins un questionnaire dépasse son seuil de repérage ("+above.join(", ")+"). Ce n'est pas un diagnostic, mais c'est une bonne raison d'en parler à un professionnel de santé.":"Aucun questionnaire ne dépasse son seuil de repérage. Si une inquiétude persiste, elle mérite quand même d'être évoquée avec le pédiatre ou le médecin traitant.";
   const next=p.band==="teen"?"Le premier interlocuteur est le médecin traitant. Il peut orienter vers un pédopsychiatre, un centre médico-psychologique (CMP) ou le Centre Ressources Autisme de la région.":"Le premier interlocuteur est le pédiatre ou le médecin traitant. En France, les plateformes de coordination et d'orientation (PCO), pour les enfants jusqu'à 12 ans, organisent un bilan pris en charge par l'Assurance maladie, sans attendre le diagnostic.";
   h+="<div class='verdict'><p><b>Orientation.</b> "+v+"</p></div><div class='finding'><h4>Et ensuite</h4><p>"+next+"</p></div>";
   h+="<div class='ai' id='ai'><div class='row'><button class='btn small' type='button' id='ai-go'>Demander une analyse détaillée à Claude</button><span class='ai-status' id='ai-status'>Claude relit toutes les réponses et rédige une analyse complète.</span></div><div class='ai-out' id='ai-out'></div></div>";
   return h}
 
+function profileBullets(){
+  const b=[];const has=complete;
+  if(has("aq")){const s=total("aq");b.push(s>=32?"Des traits autistiques marqués dans votre façon de vous décrire (AQ "+s+"/50).":s>=26?"Des traits autistiques modérés dans votre façon de vous décrire (AQ "+s+"/50).":"Peu de traits autistiques dans votre façon de vous décrire (AQ "+s+"/50).")}
+  if(has("eq")||has("rm")||has("fp")){const parts=[];
+    if(has("eq"))parts.push(total("eq")<=32?"une empathie déclarée basse":"une empathie déclarée dans la norme");
+    if(has("rm"))parts.push(total("rm")>=26?"une bonne lecture des émotions dans le regard":total("rm")<=21?"une lecture des regards en difficulté":"une lecture des regards un peu sous la moyenne");
+    if(has("fp")){const r=fpStats();parts.push(r.det>=9&&r.beliefErr.length<=1?"les maladresses sociales bien repérées et comprises":"des maladresses sociales parfois manquées ou mal interprétées")}
+    b.push("Côté relations : "+parts.join(", ")+".")}
+  if(has("fq")){const s=total("fq");b.push(s>=70?"Des amitiés investies, dans la fourchette habituelle (FQ "+s+"/140).":s>=54?"Des amitiés un peu moins investies que la moyenne (FQ "+s+"/140).":"Des amitiés peu investies, par choix ou par difficulté (FQ "+s+"/140).")}
+  if(has("tas")){const s=total("tas");b.push(s>=61?"Une difficulté nette à identifier et décrire vos propres émotions : alexithymie probable (TAS-20 "+s+"/100).":s>=52?"Une difficulté modérée à identifier vos émotions (TAS-20 "+s+"/100).":"Vos émotions sont identifiées et exprimées sans difficulté particulière (TAS-20 "+s+"/100).")}
+  if(has("spq")){const s=total("spq");b.push(s<=28?"Une sensibilité sensorielle élevée (SPQ "+s+"/105).":s<=58?"Une sensibilité sensorielle dans la moyenne (SPQ "+s+"/105).":"Une sensibilité sensorielle plutôt faible (SPQ "+s+"/105).")}
+  if(has("sq")){const s=total("sq");b.push(s>=77?"Un goût très fort pour les systèmes, les règles et les détails techniques (SQ "+s+"/150).":s>=61?"Un goût marqué pour les systèmes et le fonctionnement des choses (SQ "+s+"/150).":"Un intérêt modéré pour les systèmes (SQ "+s+"/150).")}
+  if(has("cq")){const av=CQ_SUB.map(([,it])=>sum("cq",it)/it.length);b.push(av[0]>=4.5||av[2]>=4.5?"Un camouflage social important, avec stratégies apprises ou effort pour s'intégrer (CAT-Q).":av[1]>=4.5?"Un contrôle de l'image que vous donnez, sans les stratégies apprises typiques du camouflage autistique (CAT-Q).":"Peu de camouflage social (CAT-Q).")}
+  b.push(has("castR")?(total("castR")>=15?"Dans l'enfance, un proche rapporte plusieurs signes caractéristiques (CAST "+total("castR")+"/31).":"Dans l'enfance, un proche rapporte peu de signes caractéristiques (CAST "+total("castR")+"/31)."):"L'enfance n'est pas documentée (test facultatif non fait) : c'est l'information qui manque le plus pour trancher.");
+  return b}
 function synthesis(){
   if(curProfile().band!=="adult")return kidSynthesis();
-  const dn=ORDER.filter(complete);
+  const p=curProfile(),req=required(),rd=req.filter(complete),dn=ORDER.filter(complete),full=rd.length===req.length;
   let rows="";const pro=[],con=[];let strong=null;
-  const add=(m,score,lec)=>{rows+="<tr><td>"+T[m].short+"</td><td>"+T[m].name+"</td><td class='n'>"+score+"</td><td>"+lec+"</td></tr>"};
-  if(complete("aq")){const s=total("aq");add("aq",s+"/50",s>=32?"seuil haut":s>=26?"zone intermédiaire":"sous le seuil");if(s>=32)pro.push("AQ au seuil haut ("+s+"/50)");else if(s>=26)pro.push("AQ en zone intermédiaire ("+s+"/50)");else con.push("AQ sous le seuil ("+s+"/50)")}
-  if(complete("eq")){const s=total("eq");add("eq",s+"/80",s<=32?"bas":s<=52?"moyen":"élevé");if(s<=32)pro.push("Empathie déclarée basse (EQ "+s+"/80)");else con.push("Empathie déclarée dans la norme (EQ "+s+"/80)")}
-  if(complete("rm")){const s=total("rm");add("rm",s+"/36",s>=26?"dans la norme ou au-dessus":s>=22?"légèrement sous la moyenne":"nettement sous la moyenne");if(s<=21)pro.push("Lecture des regards en dessous de la moyenne ("+s+"/36)");else if(s>=26)con.push("Lecture des regards dans la norme ou au-dessus ("+s+"/36) : la capacité de base est là")}
-  if(complete("tas")){const s=total("tas");add("tas",s+"/100",s>=61?"alexithymie probable":s>=52?"zone intermédiaire":"pas d'alexithymie");if(s>=61)strong="L'alexithymie (TAS-20 à "+s+"/100) est le résultat le plus net"+(complete("eq")&&total("eq")<=32?". Elle explique à elle seule une bonne partie de l'empathie déclarée basse : quand on distingue mal ses propres émotions, on résonne moins avec celles des autres, sans forcément moins bien les lire.":".")}
-  if(complete("cq")){const s=total("cq");const av=CQ_SUB.map(([,it])=>sum("cq",it)/it.length);add("cq",s+"/175",(s>=100?"camouflage marqué":"sous le seuil")+" · compensation "+av[0].toFixed(1).replace(".",",")+", masquage "+av[1].toFixed(1).replace(".",",")+", assimilation "+av[2].toFixed(1).replace(".",","));
-    if(s>=100||av[0]>=4.5||av[2]>=4.5)pro.push("Camouflage marqué en compensation ou en assimilation");else if(av[0]<4&&av[2]<4)con.push("Pas le schéma de camouflage typique (compensation et assimilation basses)")}
-  if(complete("spq")){const s=total("spq");add("spq",s+"/105",s<=28?"sensibilité élevée":s<=58?"fourchette habituelle":"sensibilité plutôt faible");if(s<=28)pro.push("Sensibilité sensorielle élevée (SPQ "+s+"/105)");else if(s>=45)con.push("Pas d'hypersensibilité sensorielle (SPQ "+s+"/105)")}
-  if(complete("fp")){const r=fpStats();add("fp",r.det+"/10",r.det+" faux pas repérés, "+r.rej+"/10 rejets corrects, "+r.bel+"/10 compris comme involontaires");if(r.det<=7||r.beliefErr.length>=3)pro.push("Faux pas manqués ou mal interprétés ("+r.det+"/10 repérés)");else if(r.det>=9&&r.rej>=8&&r.beliefErr.length<=1)con.push("Faux pas repérés et intentions bien comprises ("+r.det+"/10)")}
-  if(complete("castR")){const s=total("castR");add("castR",s+"/31",s>=15?"signes dans l'enfance au-dessus du seuil":s>=12?"proche du seuil":"peu de signes dans l'enfance");if(s>=15)pro.push("Signes dans l'enfance rapportés par un proche (CAST "+s+"/31)");else if(s<12)con.push("Peu de signes dans l'enfance selon un proche (CAST "+s+"/31)")}
-  let h="<h2>"+(curProfile().name==="Moi"?"Votre bilan":"Bilan de "+esc(curProfile().name))+"</h2><p class='lead'>"+dn.length+" test"+(dn.length>1?"s":"")+" sur "+ORDER.length+" terminé"+(dn.length>1?"s":"")+". Le détail de chaque test est plus bas.</p><div class='tablewrap'><table class='sumtable'><thead><tr><th>Test</th><th>Mesure</th><th>Score</th><th>Lecture</th></tr></thead><tbody>"+rows+"</tbody></table></div>";
-  if(dn.length<2){h+="<p class='lead' style='margin-top:12px'>La synthèse croisée apparaît dès que deux tests sont terminés.</p>";return h}
-  h+="<div class='cols'><div class='col'><h4>Vers des traits autistiques</h4>"+(pro.length?"<ul>"+pro.map(x=>"<li>"+x+"</li>").join("")+"</ul>":"<p class='meta'>Aucun indicateur net.</p>")+"</div><div class='col'><h4>Dans l'autre sens</h4>"+(con.length?"<ul>"+con.map(x=>"<li>"+x+"</li>").join("")+"</ul>":"<p class='meta'>Aucun indicateur net.</p>")+"</div></div>";
-  let v;
-  if(pro.length>=con.length+2)v="Plusieurs indicateurs convergent vers des traits autistiques marqués. Les questionnaires ne permettent pas de conclure, mais une évaluation spécialisée est justifiée.";
-  else if(con.length>=pro.length&&strong)v="L'ensemble penche plutôt vers un profil d'alexithymie, associé à un tempérament introverti et analytique, que vers un autisme compensé. L'autisme n'est pas exclu pour autant.";
-  else if(con.length>pro.length)v="L'ensemble ne montre pas de convergence vers des traits autistiques marqués.";
-  else v="Les résultats sont partagés. Des questionnaires remplis seul ne permettent pas de trancher.";
-  h+="<div class='verdict'><p><b>Orientation.</b> "+v+"</p>"+(strong?"<p style='margin-top:8px'>"+strong+"</p>":"")+"</div>";
-  const todo=ORDER.filter(m=>!complete(m));
-  h+="<div class='finding'><h4>Et ensuite</h4><p>"+(todo.length?"Il reste "+todo.map(m=>T[m].short).join(", ")+" à faire pour compléter le tableau. ":"")+"Pour une vraie réponse sur l'autisme, il faut une évaluation clinique avec un neuropsychologue ou un psychiatre spécialisé dans l'autisme adulte : elle s'appuie sur l'enfance et une observation structurée, que ces tests ne couvrent pas."+(complete("tas")&&total("tas")>=52?" L'alexithymie, elle, se travaille bien avec un psychologue, notamment par des approches qui relient les sensations du corps aux émotions.":"")+"</p></div>";
+  dn.forEach(m=>{const [sc,lec]=lineOf(m);rows+="<tr><td>"+T[m].short+"</td><td>"+T[m].name+"</td><td class='n'>"+sc+"</td><td>"+lec+"</td></tr>"});
+  if(complete("aq")){const s=total("aq");if(s>=32)pro.push("AQ au seuil haut ("+s+"/50)");else if(s>=26)pro.push("AQ en zone intermédiaire ("+s+"/50)");else con.push("AQ sous le seuil ("+s+"/50)")}
+  if(complete("eq")){const s=total("eq");if(s<=32)pro.push("Empathie déclarée basse (EQ "+s+"/80)");else con.push("Empathie déclarée dans la norme (EQ "+s+"/80)")}
+  if(complete("rm")){const s=total("rm");if(s<=21)pro.push("Lecture des regards en dessous de la moyenne ("+s+"/36)");else if(s>=26)con.push("Lecture des regards dans la norme ou au-dessus ("+s+"/36) : la capacité de base est là")}
+  if(complete("tas")){const s=total("tas");if(s>=61)strong="L'alexithymie (TAS-20 à "+s+"/100) est le résultat le plus net"+(complete("eq")&&total("eq")<=32?". Elle explique à elle seule une bonne partie de l'empathie déclarée basse : quand on distingue mal ses propres émotions, on résonne moins avec celles des autres, sans forcément moins bien les lire.":".")}
+  if(complete("cq")){const s=total("cq");const av=CQ_SUB.map(([,it])=>sum("cq",it)/it.length);if(s>=100||av[0]>=4.5||av[2]>=4.5)pro.push("Camouflage marqué en compensation ou en assimilation");else if(av[0]<4&&av[2]<4)con.push("Pas le schéma de camouflage typique (compensation et assimilation basses)")}
+  if(complete("spq")){const s=total("spq");if(s<=28)pro.push("Sensibilité sensorielle élevée (SPQ "+s+"/105)");else if(s>=45)con.push("Pas d'hypersensibilité sensorielle (SPQ "+s+"/105)")}
+  if(complete("fp")){const r=fpStats();if(r.det<=7||r.beliefErr.length>=3)pro.push("Faux pas manqués ou mal interprétés ("+r.det+"/10 repérés)");else if(r.det>=9&&r.rej>=8&&r.beliefErr.length<=1)con.push("Faux pas repérés et intentions bien comprises ("+r.det+"/10)")}
+  if(complete("sq")){const s=total("sq");if(s>=77)pro.push("Goût très fort pour les systèmes (SQ "+s+"/150)")}
+  if(complete("fq")){const s=total("fq");if(s<=53)pro.push("Amitiés peu investies (FQ "+s+"/140)");else if(s>=70)con.push("Amitiés dans la fourchette habituelle (FQ "+s+"/140)")}
+  if(complete("castR")){const s=total("castR");if(s>=15)pro.push("Signes dans l'enfance rapportés par un proche (CAST "+s+"/31)");else if(s<12)con.push("Peu de signes dans l'enfance selon un proche (CAST "+s+"/31)")}
+  const who=p.name==="Moi"?"":" · "+esc(p.name);
+  let h="";
+  if(full)h+="<div class='concl'><h2>Conclusion générale"+who+"</h2><p class='lead'>Les "+req.length+" tests obligatoires sont faits"+(complete("castR")?", ainsi que le test facultatif de l'enfance.":". Le test de l'enfance, facultatif, n'est pas fait : la conclusion s'en passe.")+"</p>";
+  else{const left=req.filter(m=>!complete(m));h+="<h2>Bilan en cours"+who+"</h2><p class='lead'>"+rd.length+" tests obligatoires faits sur "+req.length+". La conclusion générale apparaîtra une fois terminés : "+left.map(m=>T[m].short).join(", ")+".</p><div class='progress'><span style='width:"+(rd.length/req.length*100)+"%'></span></div>"}
+  if(full)h+="<p class='secttl'>Votre profil en bref</p><ul class='bullets'>"+profileBullets().map(x=>"<li>"+x+"</li>").join("")+"</ul>";
+  if(dn.length>=2){
+    let v;
+    if(pro.length>=con.length+2)v="Plusieurs indicateurs convergent vers des traits autistiques marqués. Les questionnaires ne permettent pas de conclure, mais une évaluation spécialisée est justifiée.";
+    else if(con.length>=pro.length&&strong)v="L'ensemble penche plutôt vers un profil d'alexithymie, associé à un tempérament introverti et analytique, que vers un autisme compensé. L'autisme n'est pas exclu pour autant.";
+    else if(con.length>pro.length)v="L'ensemble ne montre pas de convergence vers des traits autistiques marqués.";
+    else v="Les résultats sont partagés. Des questionnaires remplis seul ne permettent pas de trancher.";
+    h+="<div class='verdict'><p><b>"+(full?"Conclusion.":"Orientation provisoire.")+"</b> "+v+"</p>"+(strong?"<p style='margin-top:8px'>"+strong+"</p>":"")+"</div>";
+    h+="<div class='cols'><div class='col'><h4>Vers des traits autistiques</h4>"+(pro.length?"<ul>"+pro.map(x=>"<li>"+x+"</li>").join("")+"</ul>":"<p class='meta'>Aucun indicateur net.</p>")+"</div><div class='col'><h4>Dans l'autre sens</h4>"+(con.length?"<ul>"+con.map(x=>"<li>"+x+"</li>").join("")+"</ul>":"<p class='meta'>Aucun indicateur net.</p>")+"</div></div>";
+  }else h+="<p class='lead' style='margin-top:12px'>La lecture croisée apparaît dès que deux tests sont terminés.</p>";
+  if(rows)h+="<details style='margin-top:14px'><summary>Tous les scores</summary><div class='tablewrap'><table class='sumtable'><thead><tr><th>Test</th><th>Mesure</th><th>Score</th><th>Lecture</th></tr></thead><tbody>"+rows+"</tbody></table></div></details>";
+  h+="<div class='finding'><h4>Et ensuite</h4><p>Pour une vraie réponse sur l'autisme, il faut une évaluation clinique avec un neuropsychologue ou un psychiatre spécialisé dans l'autisme adulte : elle s'appuie sur l'enfance et une observation structurée, que ces tests ne couvrent pas."+(complete("tas")&&total("tas")>=52?" L'alexithymie, elle, se travaille bien avec un psychologue, notamment par des approches qui relient les sensations du corps aux émotions.":"")+(full&&!complete("castR")?" Si un proche peut un jour remplir le test de l'enfance, il complétera utilement ce bilan.":"")+"</p></div>";
+  if(full)h+="</div>";
   h+="<div class='ai' id='ai'><div class='row'><button class='btn small' type='button' id='ai-go'>Demander une analyse détaillée à Claude</button><span class='ai-status' id='ai-status'>Claude relit toutes vos réponses et rédige une analyse complète.</span></div><div class='ai-out' id='ai-out'></div></div>";
   return h;
 }
-
 function showResults(){
   mode=null;header();
   $("synth").innerHTML=synthesis();
-  const secs=$("secs");secs.innerHTML="";
-  ORDER.forEach(m=>{const sec=document.createElement("section");sec.className="panel sec";
-    if(complete(m)){sec.innerHTML=ANA[m](m)}else{sec.innerHTML="<h3>"+T[m].name+" <span class='meta'>("+T[m].short+")</span></h3><p class='lead' style='margin-top:6px'>Pas encore terminé ("+done(m)+"/"+T[m].n+").</p><button class='btn small' type='button'>"+(done(m)?"Reprendre":"Commencer")+"</button>";sec.querySelector("button").onclick=()=>start(m)}
-    secs.appendChild(sec)});
+  const secs=$("secs");secs.innerHTML="<p class='secttl' style='margin:20px 4px 6px'>Détail par test</p>";
+  ORDER.forEach(m=>{const d=document.createElement("details");d.className="panel sec";
+    const c=complete(m),[sc,lec]=c?lineOf(m):["",""];
+    d.innerHTML="<summary><b></b><span class='meta'></span></summary><div class='secbody'></div>";
+    d.querySelector("b").textContent=T[m].name+(OPTIONAL.has(m)?" (facultatif)":"");
+    d.querySelector(".meta").textContent=c?sc+" · "+lec:(done(m)?"en cours, "+done(m)+"/"+T[m].n:"à faire");
+    const body=d.querySelector(".secbody");
+    if(c)body.innerHTML=ANA[m](m);else{body.innerHTML="<p class='lead'>Pas encore terminé.</p><button class='btn small' type='button'>"+(done(m)?"Reprendre":"Commencer")+"</button>";body.querySelector("button").onclick=()=>start(m)}
+    secs.appendChild(d)});
   wireAI();show("v-res");
 }
 
