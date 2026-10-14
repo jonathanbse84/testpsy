@@ -330,7 +330,8 @@ const BANDS={adult:{label:"Adulte",tests:["aq","eq","rm","tas","cq","spq","fp","
 let ORDER=BANDS.adult.tests;
 
 /* ---------- état : comptes et personnes dans Supabase ---------- */
-const SB=supabase.createClient("https://krauhoyjcdexhretcknd.supabase.co","sb_publishable_XBRHY5lKps5qAVDYjafqAg_VOG3y4B_",{auth:{persistSession:true,storageKey:"bilan-auth"}});
+const SB_OK=typeof window.supabase!=="undefined"&&!!window.supabase.createClient;
+const SB=SB_OK?supabase.createClient("https://krauhoyjcdexhretcknd.supabase.co","sb_publishable_XBRHY5lKps5qAVDYjafqAg_VOG3y4B_",{auth:{persistSession:true,storageKey:"bilan-auth"}}):null;
 let DATA={profiles:[],cur:null};
 let S={},ME=null;
 function ensure(p){BANDS[p.band].tests.forEach(m=>{if(!Array.isArray(p.ans[m])||p.ans[m].length!==T[m].n)p.ans[m]=Array(T[m].n).fill(null)});if(p.ans.ex===undefined)p.ans.ex=null}
@@ -359,7 +360,8 @@ function showAuth(){ME=null;whoBar();setAuthMode("in");show("v-auth");$("count")
 function setAuthMode(m){authMode=m;$("tab-in").setAttribute("aria-selected",m==="in");$("tab-up").setAttribute("aria-selected",m==="up");$("f-name").hidden=m==="in";$("a-go").textContent=m==="in"?"Se connecter":"Créer mon compte";$("a-pass").autocomplete=m==="in"?"current-password":"new-password";$("a-msg").textContent="";$("a-msg").className="msg"}
 const frErr=e=>{const m=(e&&e.message)||"";if(/Invalid login/i.test(m))return "E-mail ou mot de passe incorrect.";if(/already registered|already exists/i.test(m))return "Un compte existe déjà avec cette adresse. Connectez-vous.";if(/Password should/i.test(m))return "Mot de passe trop court : 8 caractères minimum.";if(/rate limit/i.test(m))return "Trop de tentatives. Réessayez dans quelques minutes.";if(/Email not confirmed/i.test(m))return "Adresse e-mail pas encore confirmée.";return m||"Une erreur est survenue. Réessayez."};
 async function boot(){
-  const {data:{session}}=await SB.auth.getSession();
+  if(!SB){showWait("Connexion au serveur impossible","Le site n'arrive pas à charger son module de connexion. Ouvrez-le depuis son adresse web (jonathanbse84.github.io/testpsy), pas depuis un aperçu de fichier, et vérifiez votre connexion internet.");return}
+  let session=null;try{({data:{session}}=await SB.auth.getSession())}catch(e){showWait("Connexion au serveur impossible","Le serveur ne répond pas. Vérifiez votre connexion internet et réessayez.");return}
   if(!session){showAuth();return}
   const {data:m,error}=await SB.from("members").select("*").eq("id",session.user.id).maybeSingle();
   if(error||!m){ME=null;showWait("Compte introuvable","Votre compte n'a pas de fiche membre. Contactez l'administrateur.");return}
